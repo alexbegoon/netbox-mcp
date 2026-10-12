@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "netbox": {
+      "command": "/absolute/path/to/netbox-mcp/.venv/bin/netbox-mcp",
+      "env": {
+        "NETBOX_TOKEN": "${NETBOX_TOKEN}",
+        "NETBOX_URL": "${NETBOX_URL}",
+        "NETBOX_DRY_RUN": "${NETBOX_DRY_RUN:-1}"
+      }
+    }
+  }
+}
