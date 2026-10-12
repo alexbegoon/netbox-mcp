@@ -162,6 +162,47 @@ REGISTRY: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "cable": ("cables", "dcim/cables", ("label", "status", "a_terminations", "b_terminations", "type")),
     "tag": ("tags", "extras/tags", ("name", "slug", "color", "description")),
     "location": ("locations", "dcim/locations", ("name", "slug", "site", "parent", "status", "description")),
+    # dcim
+    "rack": ("racks", "dcim/racks", ("name", "site", "location", "status", "role", "u_height", "description")),
+    "rack_role": ("rack_roles", "dcim/rack-roles", ("name", "slug", "color", "description")),
+    "region": ("regions", "dcim/regions", ("name", "slug", "parent", "description")),
+    "site_group": ("site_groups", "dcim/site-groups", ("name", "slug", "parent", "description")),
+    "platform": ("platforms", "dcim/platforms", ("name", "slug", "manufacturer", "description")),
+    "front_port": ("front_ports", "dcim/front-ports", ("name", "device", "type", "rear_port", "description")),
+    "rear_port": ("rear_ports", "dcim/rear-ports", ("name", "device", "type", "positions", "description")),
+    "console_port": ("console_ports", "dcim/console-ports", ("name", "device", "type", "description")),
+    "console_server_port": ("console_server_ports", "dcim/console-server-ports", ("name", "device", "type", "description")),
+    "power_port": ("power_ports", "dcim/power-ports", ("name", "device", "type", "description")),
+    "power_outlet": ("power_outlets", "dcim/power-outlets", ("name", "device", "type", "description")),
+    "power_panel": ("power_panels", "dcim/power-panels", ("name", "site", "location", "description")),
+    "power_feed": ("power_feeds", "dcim/power-feeds", ("name", "power_panel", "rack", "status", "type", "description")),
+    "inventory_item": ("inventory_items", "dcim/inventory-items", ("name", "device", "manufacturer", "serial", "asset_tag", "description")),
+    # ipam
+    "aggregate": ("aggregates", "ipam/aggregates", ("prefix", "rir", "tenant", "date_added", "description")),
+    "rir": ("rirs", "ipam/rirs", ("name", "slug", "is_private", "description")),
+    "ipam_role": ("ipam_roles", "ipam/roles", ("name", "slug", "weight", "description")),
+    "vlan_group": ("vlan_groups", "ipam/vlan-groups", ("name", "slug", "min_vid", "max_vid", "description")),
+    "route_target": ("route_targets", "ipam/route-targets", ("name", "tenant", "description")),
+    "fhrp_group": ("fhrp_groups", "ipam/fhrp-groups", ("name", "protocol", "group_id", "description")),
+    "asn": ("asns", "ipam/asns", ("asn", "rir", "tenant", "description")),
+    # circuits
+    "provider": ("providers", "circuits/providers", ("name", "slug", "description")),
+    "circuit_type": ("circuit_types", "circuits/circuit-types", ("name", "slug", "description")),
+    "circuit": ("circuits", "circuits/circuits", ("cid", "provider", "type", "status", "tenant", "description")),
+    "circuit_termination": ("circuit_terminations", "circuits/circuit-terminations", ("circuit", "term_side", "termination", "port_speed", "description")),
+    # virtualization
+    "cluster_type": ("cluster_types", "virtualization/cluster-types", ("name", "slug", "description")),
+    "cluster_group": ("cluster_groups", "virtualization/cluster-groups", ("name", "slug", "description")),
+    "cluster": ("clusters", "virtualization/clusters", ("name", "type", "group", "status", "site", "description")),
+    "virtual_machine": ("virtual_machines", "virtualization/virtual-machines", ("name", "status", "site", "cluster", "role", "primary_ip4", "description")),
+    "vm_interface": ("vm_interfaces", "virtualization/interfaces", ("name", "virtual_machine", "enabled", "mac_address", "description")),
+    # tenancy
+    "tenant_group": ("tenant_groups", "tenancy/tenant-groups", ("name", "slug", "parent", "description")),
+    "contact_group": ("contact_groups", "tenancy/contact-groups", ("name", "slug", "parent", "description")),
+    "contact_role": ("contact_roles", "tenancy/contact-roles", ("name", "slug", "description")),
+    "contact": ("contacts", "tenancy/contacts", ("name", "email", "phone", "group", "description")),
+    # extras
+    "journal_entry": ("journal_entries", "extras/journal-entries", ("assigned_object_type", "assigned_object_id", "kind", "comments")),
 }
 
 
@@ -197,6 +238,38 @@ IMPACT: dict[str, tuple[tuple[str, str, dict[str, str]], ...]] = {
         ("devices", "dcim/devices", {"location_id": "id"}),
         ("racks", "dcim/racks", {"location_id": "id"}),
         ("child_locations", "dcim/locations", {"parent_id": "id"}),
+    ),
+    "rack": (("devices", "dcim/devices", {"rack_id": "id"}),),
+    "region": (
+        ("sites", "dcim/sites", {"region_id": "id"}),
+        ("child_regions", "dcim/regions", {"parent_id": "id"}),
+    ),
+    "site_group": (
+        ("sites", "dcim/sites", {"group_id": "id"}),
+        ("child_site_groups", "dcim/site-groups", {"parent_id": "id"}),
+    ),
+    "platform": (
+        ("devices", "dcim/devices", {"platform_id": "id"}),
+        ("virtual_machines", "virtualization/virtual-machines", {"platform_id": "id"}),
+    ),
+    "vlan_group": (("vlans", "ipam/vlans", {"group_id": "id"}),),
+    "rir": (("aggregates", "ipam/aggregates", {"rir_id": "id"}),),
+    "ipam_role": (
+        ("prefixes", "ipam/prefixes", {"role_id": "id"}),
+        ("vlans", "ipam/vlans", {"role_id": "id"}),
+    ),
+    "provider": (("circuits", "circuits/circuits", {"provider_id": "id"}),),
+    "circuit_type": (("circuits", "circuits/circuits", {"type_id": "id"}),),
+    "cluster_type": (("clusters", "virtualization/clusters", {"type_id": "id"}),),
+    "cluster_group": (("clusters", "virtualization/clusters", {"group_id": "id"}),),
+    "cluster": (
+        ("virtual_machines", "virtualization/virtual-machines", {"cluster_id": "id"}),
+        ("devices", "dcim/devices", {"cluster_id": "id"}),
+    ),
+    "virtual_machine": (("interfaces", "virtualization/interfaces", {"virtual_machine_id": "id"}),),
+    "tenant_group": (
+        ("tenants", "tenancy/tenants", {"group_id": "id"}),
+        ("child_tenant_groups", "tenancy/tenant-groups", {"parent_id": "id"}),
     ),
 }
 # stem -> fields of the fetched object whose presence counts as 1 dependent (no extra request)
@@ -256,6 +329,16 @@ def _brief(item: dict, fields: tuple[str, ...]) -> dict:
     return out
 
 
+_GATE = (
+        "Two-step in the default \"confirm\" mode: a call without `confirm` is always a preview (only GETs; any dry_run value) "
+        "and returns `mode`, `preview_id`, `expires_in_s` (600) and `next_step`. Review it, then repeat the identical call with "
+        "confirm=<preview_id> to apply; the preview is single-use and refused if missing, expired, for different arguments or "
+        "if confirm does not match. dry_run=true always previews and never applies, even with confirm. If the server env "
+        "NETBOX_DRY_RUN is 0/false/no/off the mode is \"direct\": no gate, dry_run unset/false writes immediately, dry_run=true "
+        "previews, confirm is ignored."
+    )
+
+
 def _register(stem: str, plural: str, path: str, fields: tuple[str, ...]) -> None:
     label = stem.replace("_", " ")
 
@@ -311,14 +394,7 @@ def _register(stem: str, plural: str, path: str, fields: tuple[str, ...]) -> Non
         f"set brief=false for full objects."
     )
     get_object.__doc__ = f"Get one NetBox {label} by numeric id (full object)."
-    gate = (
-        "Two-step in the default \"confirm\" mode: a call without `confirm` is always a preview (only GETs; any dry_run value) "
-        "and returns `mode`, `preview_id`, `expires_in_s` (600) and `next_step`. Review it, then repeat the identical call with "
-        "confirm=<preview_id> to apply; the preview is single-use and refused if missing, expired, for different arguments or "
-        "if confirm does not match. dry_run=true always previews and never applies, even with confirm. If the server env "
-        "NETBOX_DRY_RUN is 0/false/no/off the mode is \"direct\": no gate, dry_run unset/false writes immediately, dry_run=true "
-        "previews, confirm is ignored."
-    )
+    gate = _GATE
     create_object.__doc__ = f"Create a NetBox {label}. `data` is the JSON body per the NetBox API. Dry-run returns the POST that would be made. {gate}"
     update_object.__doc__ = (
         f"Partially update (PATCH) a NetBox {label} by id. `data` holds only changed fields. Dry-run does a GET and returns a "
@@ -338,6 +414,43 @@ def _register(stem: str, plural: str, path: str, fields: tuple[str, ...]) -> Non
 
 for _stem, (_plural, _path, _fields) in REGISTRY.items():
     _register(_stem, _plural, _path, _fields)
+
+
+# Allocation helpers: NetBox's "next available" sub-endpoints on prefixes (ipam/prefixes/{id}/available-ips|available-prefixes).
+_AVAILABLE = {"ips": "available-ips", "prefixes": "available-prefixes"}
+
+
+def _register_available(kind: str, noun: str) -> None:
+    sub = _AVAILABLE[kind]
+
+    def list_available(prefix_id: int, limit: int = 50) -> Any:
+        return _request("GET", f"ipam/prefixes/{prefix_id}/{sub}", params={"limit": limit})
+
+    def create_available(prefix_id: int, data: dict | None = None, dry_run: bool | None = None, confirm: str | None = None) -> Any:
+        endpoint = f"ipam/prefixes/{prefix_id}/{sub}"
+        body = data if data is not None else ({} if kind == "ips" else None)
+        if kind == "prefixes" and not (body and body.get("prefix_length")):
+            raise RuntimeError("data must include prefix_length (e.g. {\"prefix_length\": 28}) to allocate a child prefix")
+        fp = _fingerprint("create", endpoint, None, body)
+        preview, mode = _should_preview(dry_run, confirm, fp)
+        if preview:
+            available = _request("GET", endpoint, params={"limit": 1})
+            result = {"dry_run": True, "action": "create", "method": "POST", "path": f"/{endpoint}/", "body": body, "first_available": available[0] if isinstance(available, list) and available else None}
+            return _approve(result, fp, mode)
+        return _request("POST", endpoint, body=body)
+
+    list_available.__doc__ = f"List available (unallocated) {noun} inside the prefix with this numeric id. Read-only."
+    create_available.__doc__ = (
+        f"Allocate the next available {noun[:-1] if noun.endswith('s') else noun} inside a prefix (POST {sub}). `data` holds the new object's fields"
+        + (" (empty allocates with defaults)." if kind == "ips" else " and must include prefix_length.")
+        + " Dry-run shows the POST and the first free candidate (GET only). " + _GATE
+    )
+    mcp.tool(name=f"list_available_{kind}", annotations=ToolAnnotations(readOnlyHint=True))(list_available)
+    mcp.tool(name=f"create_available_{kind[:-1] if kind == 'ips' else 'prefix'}", annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False))(create_available)
+
+
+_register_available("ips", "IP addresses")
+_register_available("prefixes", "child prefixes")
 
 
 @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))

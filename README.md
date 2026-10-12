@@ -1,6 +1,13 @@
 # netbox-mcp
 
-Small stdio MCP server (official `mcp` SDK, FastMCP) wrapping the NetBox REST API so an MCP client such as Claude Code can read and edit a NetBox instance.
+Small stdio MCP server (official `mcp` SDK, FastMCP) wrapping the [NetBox](https://netboxlabs.com/docs/netbox/) [REST API](https://netboxlabs.com/docs/netbox/integrations/rest-api/) so an MCP client such as Claude Code can read and edit a NetBox instance.
+
+## Links
+
+- [NetBox documentation](https://netboxlabs.com/docs/netbox/)
+- [REST API overview](https://netboxlabs.com/docs/netbox/integrations/rest-api/) (endpoints, brief mode, filtering, pagination, authentication, bulk operations)
+- [NetBox source on GitHub](https://github.com/netbox-community/netbox)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ## Install
 
@@ -53,8 +60,18 @@ Confirm mode (the default) is a preview-before-apply gate for the same caller: i
 
 ## Tools
 
-For each of `site`, `prefix`, `ip_address`, `vlan`, `vrf`, `device`, `interface`, `device_type`, `manufacturer`, `device_role`, `tenant`, `service`, `cable`, `tag`, `location`:
-`list_<plural>`, `get_<name>`, `create_<name>`, `update_<name>` (PATCH), `delete_<name>` (marked destructive).
+Every object type below has `list_<plural>`, `get_<name>`, `create_<name>`, `update_<name>` (PATCH) and `delete_<name>` (marked destructive).
+
+| Area | Object types |
+|------|--------------|
+| DCIM | `site`, `location`, `region`, `site_group`, `rack`, `rack_role`, `device`, `device_type`, `device_role`, `manufacturer`, `platform`, `interface`, `front_port`, `rear_port`, `console_port`, `console_server_port`, `power_port`, `power_outlet`, `power_panel`, `power_feed`, `inventory_item`, `cable` |
+| IPAM | `prefix`, `ip_address`, `vlan`, `vlan_group`, `vrf`, `route_target`, `aggregate`, `rir`, `ipam_role` (`ipam/roles`), `asn`, `fhrp_group`, `service` |
+| Circuits | `provider`, `circuit_type`, `circuit`, `circuit_termination` |
+| Virtualization | `cluster_type`, `cluster_group`, `cluster`, `virtual_machine`, `vm_interface` (`virtualization/interfaces`) |
+| Tenancy | `tenant`, `tenant_group`, `contact`, `contact_role`, `contact_group` |
+| Extras | `tag`, `journal_entry` |
+
+Allocation helpers on prefixes (NetBox's `available-ips` / `available-prefixes` sub-endpoints): `list_available_ips`, `list_available_prefixes` (read-only) and `create_available_ip`, `create_available_prefix` (gated like other writes; `create_available_prefix` needs `prefix_length` in `data`).
 
 Plus `netbox_status` and `netbox_search`. `list_*` accepts `filters` (NetBox filter names), `limit`, `offset`, and `brief` (default true).
 
@@ -75,7 +92,7 @@ Direct mode has no gate: use it for bulk seeding where the two-step flow is nois
 
 - create: returns the request that would be sent (`method`, `path`, `body`) without any network call.
 - update: GETs the object and returns `changes` (`from`/`to`) and `unchanged`. Nested objects compare by id and choice fields by `value`. For devices, `"touches_primary_ip": true` is added when `primary_ip4`/`primary_ip6` is in the data.
-- delete: GETs the object and returns its brief view, an irreversibility warning, and an `impact` dict of dependent-object counts from read-only `limit=1` GETs (`unknown` where a count cannot be obtained; the vlan interfaces count instead fetches brief ids with `limit=1000` and counts distinct ids, because NetBox can return duplicate rows when joining tagged VLANs): site (devices, racks, prefixes, vlans), location (devices, racks, child_locations), vlan (prefixes, interfaces), prefix (child_prefixes, ip_addresses), vrf (prefixes, ip_addresses), device (interfaces, ip_addresses), interface (ip_addresses, cable 0/1), ip_address (`devices_using_as_primary_ip`, found by following the assigned interface to its device). The per-type map is the `IMPACT` table in `src/netbox_mcp/server.py`.
+- delete: GETs the object and returns its brief view, an irreversibility warning, and an `impact` dict of dependent-object counts from read-only `limit=1` GETs (`unknown` where a count cannot be obtained; the vlan interfaces count instead fetches brief ids with `limit=1000` and counts distinct ids, because NetBox can return duplicate rows when joining tagged VLANs): site (devices, racks, prefixes, vlans), location (devices, racks, child_locations), vlan (prefixes, interfaces), prefix (child_prefixes, ip_addresses), vrf (prefixes, ip_addresses), device (interfaces, ip_addresses), interface (ip_addresses, cable 0/1), ip_address (`devices_using_as_primary_ip`, found by following the assigned interface to its device); also rack, region, site_group, platform, vlan_group, rir, ipam_role, provider, circuit_type, cluster_type, cluster_group, cluster, virtual_machine and tenant_group (their dependent devices, sites, VLANs, circuits, clusters, VMs etc.). The per-type map is the `IMPACT` table in `src/netbox_mcp/server.py`.
 
 ```text
 # confirm mode (default)
