@@ -51,7 +51,7 @@ Every object type below gets `list_`, `get_`, `create_`, `update_` (PATCH) and `
 
 | Area | Object types |
 |------|--------------|
-| DCIM | `site`, `location`, `region`, `site_group`, `rack`, `rack_role`, `device`, `device_type`, `device_role`, `manufacturer`, `platform`, `interface`, `front_port`, `rear_port`, `console_port`, `console_server_port`, `power_port`, `power_outlet`, `power_panel`, `power_feed`, `inventory_item`, `cable` |
+| DCIM | `site`, `location`, `region`, `site_group`, `rack`, `rack_role`, `device`, `device_type`, `device_role`, `manufacturer`, `platform`, `interface`, `front_port`, `rear_port`, `console_port`, `console_server_port`, `power_port`, `power_outlet`, `power_panel`, `power_feed`, `inventory_item`, `device_bay`, `device_bay_template`, `module_bay`, `module`, `rack_type`, `cable` |
 | IPAM | `prefix`, `ip_address`, `vlan`, `vlan_group`, `vrf`, `route_target`, `aggregate`, `rir`, `ipam_role`, `asn`, `fhrp_group`, `service` |
 | Circuits | `provider`, `circuit_type`, `circuit`, `circuit_termination` |
 | Virtualization | `cluster_type`, `cluster_group`, `cluster`, `virtual_machine`, `vm_interface` |

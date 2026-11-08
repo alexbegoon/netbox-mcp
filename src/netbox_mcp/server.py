@@ -177,6 +177,11 @@ REGISTRY: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "power_panel": ("power_panels", "dcim/power-panels", ("name", "site", "location", "description")),
     "power_feed": ("power_feeds", "dcim/power-feeds", ("name", "power_panel", "rack", "status", "type", "description")),
     "inventory_item": ("inventory_items", "dcim/inventory-items", ("name", "device", "manufacturer", "serial", "asset_tag", "description")),
+    "device_bay": ("device_bays", "dcim/device-bays", ("name", "device", "installed_device", "description")),
+    "device_bay_template": ("device_bay_templates", "dcim/device-bay-templates", ("name", "device_type", "label", "description")),
+    "module_bay": ("module_bays", "dcim/module-bays", ("name", "device", "position", "installed_module", "description")),
+    "module": ("modules", "dcim/modules", ("device", "module_bay", "module_type", "status", "serial", "description")),
+    "rack_type": ("rack_types", "dcim/rack-types", ("model", "slug", "manufacturer", "u_height", "description")),
     # ipam
     "aggregate": ("aggregates", "ipam/aggregates", ("prefix", "rir", "tenant", "date_added", "description")),
     "rir": ("rirs", "ipam/rirs", ("name", "slug", "is_private", "description")),
@@ -273,7 +278,11 @@ IMPACT: dict[str, tuple[tuple[str, str, dict[str, str]], ...]] = {
     ),
 }
 # stem -> fields of the fetched object whose presence counts as 1 dependent (no extra request)
-IMPACT_PRESENT = {"interface": ("cable",)}
+IMPACT_PRESENT = {
+    "interface": ("cable",),
+    "device_bay": ("installed_device",),
+    "module_bay": ("installed_module",),
+}
 # (stem, label) counts that must be DISTINCT ids: NetBox joins the tagged-VLAN table for vlan_id on interfaces,
 # so `count` can include duplicate rows (e.g. 39 rows for 21 interfaces).
 IMPACT_DISTINCT = {("vlan", "interfaces")}
