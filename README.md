@@ -56,7 +56,7 @@ Every object type below gets `list_`, `get_`, `create_`, `update_` (PATCH) and `
 | Circuits | `provider`, `circuit_type`, `circuit`, `circuit_termination` |
 | Virtualization | `cluster_type`, `cluster_group`, `cluster`, `virtual_machine`, `vm_interface` |
 | Tenancy | `tenant`, `tenant_group`, `contact`, `contact_role`, `contact_group` |
-| Extras | `tag`, `journal_entry` |
+| Extras | `tag`, `journal_entry`, `custom_field`, `custom_field_choice_set` |
 
 There are also helpers for handing out addresses from a prefix (`list_available_ips`, `create_available_ip`, `list_available_prefixes`, `create_available_prefix`), plus `netbox_status` and `netbox_search`.
 

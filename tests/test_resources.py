@@ -21,7 +21,7 @@ def test_tool_names_unique_and_complete():
         assert n in tools, n
 
 
-@pytest.mark.parametrize("stem", ["rack", "region", "platform", "virtual_machine", "circuit", "cluster"])
+@pytest.mark.parametrize("stem", ["rack", "region", "platform", "virtual_machine", "circuit", "cluster", "custom_field", "custom_field_choice_set"])
 def test_new_resource_create_preview_then_confirm(nb, stem):
     path = server.REGISTRY[stem][1]
     r = nb.res(nb.call(f"create_{stem}", {"data": {"name": "x"}}))

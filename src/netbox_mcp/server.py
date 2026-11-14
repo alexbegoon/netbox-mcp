@@ -208,6 +208,8 @@ REGISTRY: dict[str, tuple[str, str, tuple[str, ...]]] = {
     "contact": ("contacts", "tenancy/contacts", ("name", "email", "phone", "group", "description")),
     # extras
     "journal_entry": ("journal_entries", "extras/journal-entries", ("assigned_object_type", "assigned_object_id", "kind", "comments")),
+    "custom_field": ("custom_fields", "extras/custom-fields", ("name", "label", "type", "object_types", "required", "validation_regex", "description")),
+    "custom_field_choice_set": ("custom_field_choice_sets", "extras/custom-field-choice-sets", ("name", "base_choices", "extra_choices", "description")),
 }
 
 
